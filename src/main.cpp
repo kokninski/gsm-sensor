@@ -10,6 +10,8 @@ void setup(){
     delay(3000);
     Serial.println("Starting...");
     InitialiseModem();
+    mqtt.publish("gsmModem/test", "test");
+    StopModem();
 }
 
 void loop(){

@@ -45,6 +45,7 @@ void mqttCallback(char* topic, byte* payload, unsigned int len);
 bool mqttConnect();
 void InitialiseModem();
 void StartModem();
+void StopModem();
 
 
 #endif
