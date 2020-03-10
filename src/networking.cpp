@@ -133,6 +133,10 @@ void InitialiseModem(){
     // MQTT Broker setup
     mqtt.setServer(broker, 1883);
     mqtt.setCallback(mqttCallback);
+    if(!mqtt.connected()){
+        SerialMon.println("Connecting to MQTT...");
+        mqtt.connect(mqtt_client_name, mqtt_user, mqtt_pass);
+    }
 
 }
 void StartModem(){
