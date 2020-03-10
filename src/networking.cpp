@@ -59,26 +59,7 @@ bool mqttConnect(){
 void InitialiseModem(){
     // Cycle the power to the Gsm module to ensure proper startup
     SerialMon.println("Starting the GSM modem");
-    pinMode(SIM800_EN, OUTPUT);
-    pinMode(SIM800_PWRKEY, OUTPUT);
-
-    // Initially set both pins to low
-    digitalWrite(SIM800_EN, LOW);
-    digitalWrite(SIM800_PWRKEY, LOW);
-
-    digitalWrite(SIM800_EN, HIGH); // enable power to GSM module
-    digitalWrite(SIM800_PWRKEY, HIGH); 
-    delay(500); // wait for power to stabilise
-
-    digitalWrite(SIM800_PWRKEY, LOW);
-    delay(1200); // low signal for at least 1s 
-
-    digitalWrite(SIM800_PWRKEY, HIGH);
-
-    while(!digitalRead(SIM800_STAT)){
-        delay(100);
-        SerialMon.println(digitalRead(SIM800_STAT));
-    }
+    StartModem();
     SerialMon.println("Modem Started");
     // !!!!!!!!!!!
 
@@ -152,9 +133,58 @@ void InitialiseModem(){
     // MQTT Broker setup
     mqtt.setServer(broker, 1883);
     mqtt.setCallback(mqttCallback);
+    if(!mqtt.connected()){
+        SerialMon.println("Connecting to MQTT...");
+        mqtt.connect(mqtt_client_name, mqtt_user, mqtt_pass);
+    }
 
 }
 void StartModem(){
-    
-}
+    pinMode(SIM800_EN, OUTPUT);
+    pinMode(SIM800_PWRKEY, OUTPUT);
+    pinMode(SIM800_STAT, INPUT_FLOATING);
 
+    // Initially set both pins to low
+    digitalWrite(SIM800_EN, LOW);
+    digitalWrite(SIM800_PWRKEY, LOW);
+
+    digitalWrite(SIM800_EN, HIGH); // enable power to GSM module
+    digitalWrite(SIM800_PWRKEY, HIGH); 
+    delay(500); // wait for power to stabilise
+
+    digitalWrite(SIM800_PWRKEY, LOW);
+    delay(1200); // low signal for at least 1s 
+
+    digitalWrite(SIM800_PWRKEY, HIGH);
+
+    while(!digitalRead(SIM800_STAT)){
+        delay(100);
+        SerialMon.println(digitalRead(SIM800_STAT));
+    }
+    SerialMon.println("Modem Started");
+
+}
+void StopModem(){
+    pinMode(SIM800_EN, OUTPUT);
+    pinMode(SIM800_PWRKEY, OUTPUT);
+    pinMode(SIM800_STAT, INPUT_FLOATING);
+
+    // Initially set both pins should be high
+    digitalWrite(SIM800_EN, HIGH); 
+    digitalWrite(SIM800_PWRKEY, HIGH); 
+    delay(10); // wait for power to stabilise
+
+    digitalWrite(SIM800_PWRKEY, LOW);
+    // delay(1700); // low signal for at least 1.5s 
+    // wait untill STATUS is not low
+    while(digitalRead(SIM800_STAT)){
+        delay(100);
+        SerialMon.println(digitalRead(SIM800_STAT));
+    }
+    digitalWrite(SIM800_PWRKEY, HIGH);
+    delay(10);
+    // Now turn the power off
+    digitalWrite(SIM800_EN, LOW);
+    digitalWrite(SIM800_PWRKEY, LOW);
+
+}
