@@ -13,7 +13,7 @@ enum state{
 
 class StateMachine {
     private:
-        PubSubClient mqtt_client;
+        PubSubClient* mqtt_client;
         state _state;
         unsigned long time;
         unsigned long prev_time;

@@ -5,7 +5,7 @@
 
 StateMachine::StateMachine(PubSubClient& _mqtt){
     this->_state = WAIT;
-    this->mqtt_client = _mqtt;
+    this->mqtt_client = &_mqtt;
     this->prev_time = millis();
     this->time = millis();
     this->interval = 5000U;
@@ -49,7 +49,9 @@ void StateMachine::wait(){
 
 int StateMachine::send_data_mqtt(){
     InitialiseModem();
-    int ret = mqtt_client.publish("gsmModem/test", "test");
+    int ret = mqtt_client->publish("gsmModem/test", "test");
+    ret = mqtt_client->publish("gsmModem/test1", "test");
+    ret = mqtt_client->publish("gsmModem/test2", "test");    
     Serial.print("MQTT returned: ");
     Serial.println(ret);
     delay(1000);
