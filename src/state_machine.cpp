@@ -50,11 +50,6 @@ void StateMachine::wait(){
 int StateMachine::send_data_mqtt(){
     InitialiseModem();
     int ret = mqtt_client->publish("gsmModem/test", "test");
-    ret = mqtt_client->publish("gsmModem/test1", "test");
-    ret = mqtt_client->publish("gsmModem/test2", "test");    
-    Serial.print("MQTT returned: ");
-    Serial.println(ret);
-    delay(1000);
     StopModem();
     this->prev_time = millis();
     this->_state = WAIT;
@@ -62,6 +57,10 @@ int StateMachine::send_data_mqtt(){
 }
 
 int StateMachine::read_data_mqtt(){
+    // Start Modem to receive messages through mqtt
+    InitialiseModem();
+    delay(2000);
+    StopModem;
     return 0;
 }
 
